@@ -4,23 +4,26 @@
     <meta charset="UTF-8" />
     <title>Bistro popup</title>
     <style>
-header {
-  background-color: #EA5736;
-  margin-top: -7em;
-}
+      header {
+        background-color: #ea5736;
+        margin-top: -10em;
+        padding-bottom: 1em;
+      }
       h1 {
         margin: 2em;
         padding-top: 1em;
-        font-size: 3.5em;
+        font-size: 5em;
         color: #345554;
-        font-family: 'Rubik Mono One', sans-serif;
+        font-family: "Rubik Mono One", sans-serif;
         font-weight: 300;
+        margin-bottom: 0.5em;
       }
-body {
-  padding: 0;
-  margin: 0;
-  background-color: #EFB88B;
-}
+
+      body {
+        padding: 0;
+        margin: 0;
+        background-color: #efb88b;
+      }
 
       main {
         margin: 1em;
@@ -31,8 +34,22 @@ body {
         text-align: center;
       }
 
+      button {
+        font-family: "Gidugu", sans-serif;
+        font-size: 2em;
+        background-color: #ffeede;
+        color: #345554;
+        display: inline-block;
+      }
+
       .valgt {
-        background-color: blue;
+        background-color: #efb88b;
+      }
+
+      header h2 {
+        font-family: "Russo One", sans-serif;
+        text-align: center;
+        font-size: 2em;
       }
 
       article {
@@ -40,7 +57,7 @@ body {
         border-radius: 25px;
         padding: 10px;
         margin: 1em;
-        background-color: #FFEEDE;
+        background-color: #ffeede;
       }
 
       img {
@@ -56,34 +73,42 @@ body {
       #popup {
         width: 100vw;
         height: 100vw;
-        background-color:#00000099;
+        background-color: #00000099;
         position: fixed;
         top: 0;
         padding: 2em;
         display: none;
         justify-content: center;
-        
       }
 
       #popupinfo {
         justify-content: center;
-background-color: white;
-width: 40vw;
-margin-bottom: 10em;
+        background-color: white;
+        width: 40vw;
+        margin-bottom: 10em;
+        margin-inline: auto;
       }
 
-.billedep {
-  width: 100%;
-  border-radius: 25px;
-}
+      #tilbage {
+        font-family: "Rubik Mono One", sans-serif;
+        margin-left: 15em;
+      }
+
+      .billedep {
+        width: 100%;
+        border-radius: 25px;
+      }
     </style>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Gidugu&family=Rubik+Mono+One&family=Russo+One&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Gidugu&family=Rubik+Mono+One&family=Russo+One&display=swap"
+      rel="stylesheet"
+    />
   </head>
 
   <header>
- <Section><h1>Bistro Babushska</h1></Section>
+    <section><h1>Bistro Babushska</h1></section>
     <nav>
       <ul>
         <button data-kategori="alle" class="valgt">Alle</button>
@@ -97,112 +122,112 @@ margin-bottom: 10em;
   </header>
 
   <body>
-
-
-    <section id="popup"> 
+    <section id="popup">
       <button id="tilbage">X</button>
       <article id="popupinfo">
         <img class="billedep" src="" alt="" />
-            <h2></h2>
-            <p class="langbeskrivelse"></p>
-            <p class="pris"></p>
-      </article>
-    </section>
-<main>
-    <section class="data_container"></section>
-
-    <template>
-      <article>
-        <img src="" alt="" />
-        <h3></h3>
-        <p class="kortbeskrivelse"></p>
+        <h2></h2>
+        <p class="langbeskrivelse"></p>
         <p class="pris"></p>
       </article>
-    </template>
+    </section>
+    <main>
+      <section class="data_container"></section>
 
+      <template>
+        <article>
+          <img src="" alt="" />
+          <h3></h3>
+          <p class="kortbeskrivelse"></p>
+          <p class="pris"></p>
+        </article>
+      </template>
 
+      <script>
+        const url = "https://babushka-dd8a.restdb.io/rest/menu";
 
-    <script>
-      const url = "https://babushka-dd8a.restdb.io/rest/menu";
+        const options = {
+          headers: {
+            "x-apikey": "600ec2fb1346a1524ff12de4",
+          },
+        };
 
-      const options = {
-        headers: {
-          "x-apikey": "600ec2fb1346a1524ff12de4",
-        },
-      };
+        document.addEventListener("DOMContentLoaded", start);
+        let madretter;
+        let container;
+        let temp;
+        let filter = "alle";
+        const header = document.querySelector("header h2");
 
-      document.addEventListener("DOMContentLoaded", start);
-      let madretter;
-      let container;
-      let temp;
-      let filter = "alle";
-      const header = document.querySelector("header h2");
+        function start() {
+          container = document.querySelector(".data_container");
+          temp = document.querySelector("template");
 
-      function start() {
-        container = document.querySelector(".data_container");
-        temp = document.querySelector("template");
+          const filterKnapper = document.querySelectorAll("nav button");
+          filterKnapper.forEach((knap) =>
+            knap.addEventListener("click", filtrerMadretter)
+          );
+          hentData();
+        }
 
-        const filterKnapper = document.querySelectorAll("nav button");
-        filterKnapper.forEach((knap) =>
-          knap.addEventListener("click", filtrerMadretter)
-        );
+        function filtrerMadretter() {
+          filter = this.dataset.kategori;
+          document.querySelector(".valgt").classList.remove("valgt");
+          this.classList.add("valgt");
+
+          visMad();
+          header.textContent = this.textContent;
+        }
+
+        async function hentData() {
+          const resspons = await fetch(url, options);
+          madretter = await resspons.json();
+          visMad();
+        }
+
+        function visMad() {
+          container.textContent = "";
+
+          madretter.forEach((madret) => {
+            if (filter == madret.kategori || filter == "alle") {
+              const klon = temp.cloneNode(true).content;
+              const md = "-md.jpg";
+              klon.querySelector("img").src =
+                "billeder/" + madret.billednavn + md;
+              klon.querySelector("h3").textContent = madret.navn;
+              klon.querySelector(".kortbeskrivelse").textContent =
+                madret.kortbeskrivelse;
+              klon.querySelector(".pris").textContent =
+                "Pris: " + madret.pris + ",-";
+              klon
+                .querySelector("article")
+                .addEventListener("click", () => visDetaljer(madret));
+              container.appendChild(klon);
+            }
+          });
+        }
+
+        function visDetaljer(madData) {
+          const popup = document.querySelector("#popup");
+          popup.style.display = "block";
+          popup.querySelector(".billedep").src =
+            "billeder/" + madData.billednavn + "-md.jpg";
+          popup.querySelector("h2").textContent = madData.navn;
+          popup.querySelector(".langbeskrivelse").textContent =
+            madData.langbeskrivelse;
+          popup.querySelector(".pris").textContent =
+            "Pris: " + madData.pris + ",-";
+          console.log(madData);
+        }
+
+        document.querySelector("#tilbage").addEventListener("click", lukPopup);
+
+        function lukPopup() {
+          document.querySelector("#popup").style.display = "none";
+        }
+
         hentData();
-      }
-
-      function filtrerMadretter() {
-        filter = this.dataset.kategori;
-        document.querySelector(".valgt").classList.remove("valgt");
-        this.classList.add("valgt");
-
-        visMad();
-        header.textContent = this.textContent;
-      }
-
-      async function hentData() {
-        const resspons = await fetch(url, options);
-        madretter = await resspons.json();
-        visMad();
-      }
-
-      function visMad() {
-        container.textContent = "";
-
-        madretter.forEach((madret) => {
-          if (filter == madret.kategori || filter == "alle") {
-            const klon = temp.cloneNode(true).content;
-            const md = "-md.jpg";
-            klon.querySelector("img").src =
-              "billeder/" + madret.billednavn + md;
-            klon.querySelector("h3").textContent = madret.navn;
-            klon.querySelector(".kortbeskrivelse").textContent =
-              madret.kortbeskrivelse;
-            klon.querySelector(".pris").textContent =
-              "Pris: " + madret.pris + ",-";
-              klon.querySelector("article").addEventListener("click", ()=>visDetaljer(madret))
-            container.appendChild(klon);
-          }
-        });
-      }
-
-      function visDetaljer(madData) {
-        const popup = document.querySelector("#popup");
-        popup.style.display="block";
-        popup.querySelector(".billedep").src = "billeder/" + madData.billednavn + "-md.jpg";
-        popup.querySelector("h2").textContent = madData.navn;
-        popup.querySelector(".langbeskrivelse").textContent =
-              madData.langbeskrivelse;
-        popup.querySelector(".pris").textContent = "Pris: " + madData.pris + ",-";
-console.log(madData);
-      }
-
-      document.querySelector("#tilbage").addEventListener("click", lukPopup);
-
-      function lukPopup() {
-        document.querySelector("#popup").style.display = "none";
-      }
-
-      hentData();
-    </script>
+      </script>
     </main>
   </body>
 </html>
