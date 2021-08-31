@@ -2,9 +2,27 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <title>Bistro</title>
+    <title>Bistro popup</title>
     <style>
-      body {
+header {
+  background-color: #EA5736;
+  margin-top: -7em;
+}
+      h1 {
+        margin: 2em;
+        padding-top: 1em;
+        font-size: 3.5em;
+        color: #345554;
+        font-family: 'Rubik Mono One', sans-serif;
+        font-weight: 300;
+      }
+body {
+  padding: 0;
+  margin: 0;
+  background-color: #EFB88B;
+}
+
+      main {
         margin: 1em;
         margin-left: 12em;
         margin-right: 12em;
@@ -22,21 +40,50 @@
         border-radius: 25px;
         padding: 10px;
         margin: 1em;
+        background-color: #FFEEDE;
       }
 
       img {
         max-width: 100%;
+        border-radius: 25px;
       }
 
       .data_container {
         display: grid;
         grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
       }
+
+      #popup {
+        width: 100vw;
+        height: 100vw;
+        background-color:#00000099;
+        position: fixed;
+        top: 0;
+        padding: 2em;
+        display: none;
+        justify-content: center;
+        
+      }
+
+      #popupinfo {
+        justify-content: center;
+background-color: white;
+width: 40vw;
+margin-bottom: 10em;
+      }
+
+.billedep {
+  width: 100%;
+  border-radius: 25px;
+}
     </style>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Gidugu&family=Rubik+Mono+One&family=Russo+One&display=swap" rel="stylesheet">
   </head>
 
   <header>
-    <h2>Alle</h2>
+ <Section><h1>Bistro Babushska</h1></Section>
     <nav>
       <ul>
         <button data-kategori="alle" class="valgt">Alle</button>
@@ -46,20 +93,35 @@
         <button data-kategori="drikkevarer">Drikkevarer</button>
       </ul>
     </nav>
+    <h2>Alle</h2>
   </header>
 
   <body>
+
+
+    <section id="popup"> 
+      <button id="tilbage">X</button>
+      <article id="popupinfo">
+        <img class="billedep" src="" alt="" />
+            <h2></h2>
+            <p class="langbeskrivelse"></p>
+            <p class="pris"></p>
+      </article>
+    </section>
+<main>
     <section class="data_container"></section>
 
     <template>
       <article>
         <img src="" alt="" />
         <h3></h3>
-
         <p class="kortbeskrivelse"></p>
         <p class="pris"></p>
       </article>
     </template>
+
+
+
     <script>
       const url = "https://babushka-dd8a.restdb.io/rest/menu";
 
@@ -99,7 +161,6 @@
       async function hentData() {
         const resspons = await fetch(url, options);
         madretter = await resspons.json();
-        console.log(madretter);
         visMad();
       }
 
@@ -117,12 +178,31 @@
               madret.kortbeskrivelse;
             klon.querySelector(".pris").textContent =
               "Pris: " + madret.pris + ",-";
+              klon.querySelector("article").addEventListener("click", ()=>visDetaljer(madret))
             container.appendChild(klon);
           }
         });
       }
 
+      function visDetaljer(madData) {
+        const popup = document.querySelector("#popup");
+        popup.style.display="block";
+        popup.querySelector(".billedep").src = "billeder/" + madData.billednavn + "-md.jpg";
+        popup.querySelector("h2").textContent = madData.navn;
+        popup.querySelector(".langbeskrivelse").textContent =
+              madData.langbeskrivelse;
+        popup.querySelector(".pris").textContent = "Pris: " + madData.pris + ",-";
+console.log(madData);
+      }
+
+      document.querySelector("#tilbage").addEventListener("click", lukPopup);
+
+      function lukPopup() {
+        document.querySelector("#popup").style.display = "none";
+      }
+
       hentData();
     </script>
+    </main>
   </body>
 </html>
